@@ -18,6 +18,7 @@ export interface Pet {
   color: string;
   microchipId?: string;
   avatar?: string;
+  imageUri?: string;
   medicalHistory: MedicalRecord[];
   vaccinations: Vaccination[];
   allergies: string[];
@@ -28,6 +29,19 @@ export interface Pet {
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface PetFormData {
+  name: string;
+  species: 'dog' | 'cat' | 'bird' | 'rabbit' | 'hamster' | 'fish' | 'reptile' | 'other';
+  breed: string;
+  age: number;
+  weight: number;
+  gender: 'male' | 'female';
+  color: string;
+  microchipId?: string;
+  allergies: string[];
+  notes: string;
 }
 
 export interface MedicalRecord {
@@ -90,8 +104,8 @@ export interface PetState {
   filterSpecies: string | null;
 
   // Actions
-  addPet: (petData: Omit<Pet, 'id' | 'createdAt' | 'updatedAt'>) => Promise<void>;
-  updatePet: (petId: string, updates: Partial<Pet>) => Promise<void>;
+  addPet: (petData: PetFormData, imageUri?: string) => Promise<void>;
+  updatePet: (petId: string, petData: PetFormData, imageUri?: string) => Promise<void>;
   deletePet: (petId: string) => Promise<void>;
   selectPet: (pet: Pet | null) => void;
   getPetById: (petId: string) => Pet | undefined;
@@ -115,13 +129,27 @@ const petAPI = {
     return [];
   },
 
-  async createPet(petData: Omit<Pet, 'id' | 'createdAt' | 'updatedAt'>): Promise<Pet> {
+  async createPet(petData: PetFormData, imageUri?: string): Promise<Pet> {
     // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1000));
     
     const newPet: Pet = {
-      ...petData,
       id: Date.now().toString(),
+      name: petData.name,
+      species: petData.species,
+      breed: petData.breed,
+      age: petData.age,
+      weight: petData.weight,
+      gender: petData.gender,
+      color: petData.color,
+      microchipId: petData.microchipId,
+      imageUri,
+      medicalHistory: [],
+      vaccinations: [],
+      allergies: petData.allergies,
+      medications: [],
+      notes: petData.notes,
+      isActive: true,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
@@ -129,29 +157,30 @@ const petAPI = {
     return newPet;
   },
 
-  async updatePet(petId: string, updates: Partial<Pet>): Promise<Pet> {
+  async updatePet(petId: string, petData: PetFormData, imageUri?: string): Promise<Pet> {
     // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 800));
     
     // Return updated pet (mock)
     return {
       id: petId,
-      name: 'Updated Pet',
-      species: 'dog',
-      breed: 'Mixed',
-      age: 3,
-      weight: 25,
-      gender: 'male',
-      color: 'Brown',
+      name: petData.name,
+      species: petData.species,
+      breed: petData.breed,
+      age: petData.age,
+      weight: petData.weight,
+      gender: petData.gender,
+      color: petData.color,
+      microchipId: petData.microchipId,
+      imageUri,
       medicalHistory: [],
       vaccinations: [],
-      allergies: [],
+      allergies: petData.allergies,
       medications: [],
-      notes: '',
+      notes: petData.notes,
       isActive: true,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-      ...updates,
     };
   },
 
@@ -173,11 +202,11 @@ export const usePetStore = create<PetState>()(
       filterSpecies: null,
 
       // Actions
-      addPet: async (petData) => {
+      addPet: async (petData, imageUri) => {
         try {
           set({ isLoading: true, error: null });
           
-          const newPet = await petAPI.createPet(petData);
+          const newPet = await petAPI.createPet(petData, imageUri);
           
           set(state => ({
             pets: [...state.pets, newPet],
@@ -192,11 +221,11 @@ export const usePetStore = create<PetState>()(
         }
       },
 
-      updatePet: async (petId, updates) => {
+      updatePet: async (petId, petData, imageUri) => {
         try {
           set({ isLoading: true, error: null });
           
-          const updatedPet = await petAPI.updatePet(petId, updates);
+          const updatedPet = await petAPI.updatePet(petId, petData, imageUri);
           
           set(state => ({
             pets: state.pets.map(pet => 
