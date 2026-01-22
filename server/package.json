@@ -1,7 +1,7 @@
 {
   "name": "pet-care-backend",
   "version": "1.0.0",
-  "description": "Mock backend server for pet care application",
+  "description": "Pet Care E-commerce Backend API",
   "main": "dist/server.js",
   "scripts": {
     "build": "tsc",
@@ -13,7 +13,7 @@
     "lint": "eslint src/**/*.ts",
     "lint:fix": "eslint src/**/*.ts --fix"
   },
-  "keywords": ["express", "typescript", "mock-api", "pet-care"],
+  "keywords": ["express", "typescript", "mock-api", "pet-care", "e-commerce"],
   "author": "Pet Care Team",
   "license": "MIT",
   "dependencies": {
@@ -24,9 +24,11 @@
     "bcryptjs": "^2.4.3",
     "jsonwebtoken": "^9.0.2",
     "multer": "^1.4.5-lts.1",
+    "express-validator": "^7.0.1",
     "joi": "^17.11.0",
     "uuid": "^9.0.1",
     "compression": "^1.7.4",
+    "express-rate-limit": "^6.8.1",
     "rate-limiter-flexible": "^3.0.8"
   },
   "devDependencies": {
@@ -42,6 +44,8 @@
     "@types/jest": "^29.5.8",
     "@types/supertest": "^2.0.16",
     "typescript": "^5.3.2",
+    "nodemon": "^3.0.1",
+    "ts-node": "^10.9.1",
     "ts-node-dev": "^2.0.0",
     "jest": "^29.7.0",
     "ts-jest": "^29.1.1",
